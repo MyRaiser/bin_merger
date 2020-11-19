@@ -2,6 +2,7 @@ class BinaryFile():
     '''
     从硬盘中读取一个bin，提供显示、对比方法
     '''
+
     def __init__(self, *, binary=None, path=None, bytes_in_word=4):
         '''
         Args:
@@ -82,6 +83,20 @@ class BinaryFile():
                 print(*line)    
         else:
             raise ValueError('Incorrect type.')
+    
+    def compare(self, other):
+        '''
+        compare 2 bin, return number of different bytes.
+        '''
+
+        diff_byte = 0
+        print('length:', len(self), len(other))
+        for i in range(min(len(self), len(other))):
+            if self.binary[i] != other.binary[i]:
+                print("{:08X}".format(i), x1.binary[i], x2.binary[i])
+                diff_byte += 1
+        diff_byte += abs(len(self) - len(other))
+        return diff_byte
 
     def save(self, path):
         '''
@@ -90,8 +105,6 @@ class BinaryFile():
         with open(path, 'wb') as f:
             f.write(self.binary)
             
-
-        
 
 class Merger():
     def __init__(self, images: list, start_addrs: list, *, fill=0x00):
@@ -143,7 +156,4 @@ if __name__ == "__main__":
 
     x1 = BinaryFile(path='target.bin')
     x2 = BinaryFile(path='boot.bin')
-    print(len(x1),len(x2))
-    for i in range(len(x1)):
-        if x1.binary[i] != x2.binary[i]:
-            print("{:08X}".format(i),x1.binary[i],x2.binary[i])
+    x1.compare(x2)
