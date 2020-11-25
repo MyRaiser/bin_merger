@@ -1,11 +1,12 @@
 from bin_merger import BinaryFile, Merger
 
-x1 = BinaryFile(path='bootloader.bin')
-x2 = BinaryFile(path='image1.bin')
-x3 = BinaryFile(path='image2.bin')
+x1 = BinaryFile('bootloader.bin')
+x2 = BinaryFile('funflash.bin')
+x3 = BinaryFile('entryinit.bin')
 
 y = Merger(
     [x1, x2, x3],
-    [0x00000000, 0x00010000, 0x00020000]
-    ).merge()
+    [0x00000000, 0x0003D800, 0x0003E000]
+).merge()
 y.save('target.bin')
+y.compare(BinaryFile('boot.bin'))

@@ -23,9 +23,9 @@ the code should be:
 ```py
 from bin_merger import BinaryFile, Merger
 
-x1 = BinaryFile(path='bootloader.bin')
-x2 = BinaryFile(path='image1.bin')
-x3 = BinaryFile(path='image2.bin')
+x1 = BinaryFile('bootloader.bin')
+x2 = BinaryFile('image1.bin')
+x3 = BinaryFile('image2.bin')
 
 y = Merger(
     [x1, x2, x3],

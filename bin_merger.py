@@ -3,26 +3,28 @@ class BinaryFile():
     从硬盘中读取一个bin，提供显示、对比方法
     '''
 
-    def __init__(self, *, binary=None, path=None, bytes_in_word=4):
+    def __init__(self, arg,*, bytes_in_word=4):
         '''
         Args:
             bytes_in_word: 一个字中包含byte的个数
-            binary: bytes
+            arg: 支持多种类型：
+                如果是str，则读指定路径的文件
+                如果是bytes，则直接存储
+                如果是list，则转化为bytes
         '''
 
-        if path is None:
-            if bin is None:
-                raise ValueError('You should either state path or bin')
-            else:
-                if type(binary) == bytes:
-                    self.binary = binary
-                elif type(binary) == list:
-                    self.binary = bytes(binary)
-                else:
-                    raise ValueError('Incorrect type of binary.')
-        else:
+        if type(arg) == str:
+            # 如果是str，则是路径
+            path = arg
             with open(path, 'rb') as f:
                 self.binary = f.read()
+        elif type(arg) == bytes:
+            self.binary = arg
+        elif type(arg) == list:
+            self.binary = bytes(arg)
+        else:
+            raise ValueError('Incorrect argument type.')
+            
         
         self.bytes_in_word = bytes_in_word
 
@@ -91,9 +93,17 @@ class BinaryFile():
 
         diff_byte = 0
         print('length:', len(self), len(other))
-        for i in range(min(len(self), len(other))):
-            if self.binary[i] != other.binary[i]:
-                print("{:08X}".format(i), x1.binary[i], x2.binary[i])
+        for i in range(max(len(self), len(other))):
+            if i < len(self):
+                left = "{:02X}".format(self.binary[i])
+            else:
+                left = None
+            if i < len(other):
+                right = "{:02X}".format(other.binary[i])
+            else:
+                right = None
+            if left != right:
+                print("{:08X}".format(i), left, right)
                 diff_byte += 1
         diff_byte += abs(len(self) - len(other))
         return diff_byte
@@ -130,7 +140,7 @@ class Merger():
             end = start + len(image)
             target_list[start:end] = image.byte_list()
 
-        return BinaryFile(binary=target_list)
+        return BinaryFile(target_list)
 
 
 # with open('bootloader.bin','rb') as f:
@@ -154,6 +164,6 @@ class Merger():
 
 if __name__ == "__main__":
 
-    x1 = BinaryFile(path='target.bin')
-    x2 = BinaryFile(path='boot.bin')
+    x1 = BinaryFile('target.bin')
+    x2 = BinaryFile('boot.bin')
     x1.compare(x2)
