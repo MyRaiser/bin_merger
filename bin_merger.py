@@ -117,7 +117,7 @@ class BinaryFile():
             
 
 class Merger():
-    def __init__(self, images: list, start_addrs: list, *, fill=0x00):
+    def __init__(self, images: list, start_addrs: list, *, fill=0xff):
         '''
         Args:
             images: list of BinaryFile, the bin behind has higher priority
